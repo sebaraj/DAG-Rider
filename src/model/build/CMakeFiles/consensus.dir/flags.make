@@ -4,7 +4,7 @@
 # compile CXX with /Library/Developer/CommandLineTools/usr/bin/c++
 CXX_DEFINES = -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB
 
-CXX_INCLUDES = -I/Users/bryansebaraj/Workspace/dagrider/src/model/include -isystem /opt/homebrew/include
+CXX_INCLUDES = -I/Users/bryansebaraj/Workspace/dagrider/src/model/include -I/opt/homebrew/opt/openssl@3/include -isystem /opt/homebrew/include
 
 CXX_FLAGSarm64 = -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.2
 

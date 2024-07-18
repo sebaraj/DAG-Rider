@@ -156,7 +156,9 @@ consensus: CMakeFiles/consensus.dir/committee.cpp.o
 consensus: CMakeFiles/consensus.dir/vertex.cpp.o
 consensus: CMakeFiles/consensus.dir/main.cpp.o
 consensus: CMakeFiles/consensus.dir/build.make
-consensus: /usr/local/lib/libblake3.a
+consensus: /Users/bryansebaraj/Workspace/dagrider/src/model/lib/libblake3.a
+consensus: /Users/bryansebaraj/Workspace/dagrider/src/model/lib/libed25519.a
+consensus: /opt/homebrew/opt/openssl@3/lib/libcrypto.a
 consensus: /opt/homebrew/lib/libboost_system-mt.dylib
 consensus: CMakeFiles/consensus.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/bryansebaraj/Workspace/dagrider/src/model/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable consensus"
