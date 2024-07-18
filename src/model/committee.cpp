@@ -1,13 +1,16 @@
 #include "committee.hpp"
 #include <iostream>
+#include <string>
 
 Committee::Committee() {
   std::cout << "Initializing Committee" << std::endl;
+
   validators_.emplace(
       1, Validator(
              "ad7f2ee3958a7f3fa2c84931770f5773ef7694fdd0bb217d90f29a94199c9d730"
              "7ca3851515c89344639fe6a4077923068d1d7fc6106701213c61d34ef8e9416",
              1234, 1244, 1254));
+
   validators_.emplace(
       2, Validator(
              "5a353c630d3faf8e2d333a0983c1c71d5e9b6aed8f4959578fbeb3d3f31728863"
@@ -23,6 +26,7 @@ Committee::Committee() {
              "3ae38eec96146c241f6cadf01995af14f027b23b8fecbc77dbc2e3ed5fec6fc3f"
              "b4fe5534f7affc9a8f1d99e290fdb91cc26777edd6fae480cad9f735d1b3680",
              1237, 1247, 1257));
+
   std::cout << "Committee initialized" << std::endl;
 }
 
@@ -30,7 +34,9 @@ Committee::~Committee() { std::cout << "Destroying Committee" << std::endl; }
 
 size_t Committee::size() const { return validators_.size(); }
 
-size_t Committee::quorum_threshold() const { return size() - 1; }
+size_t Committee::quorum_threshold() const {
+  return std::floor(validators_.size() * 2 / 3 + 1);
+}
 
 boost::asio::ip::tcp::endpoint Committee::get_node_address(Id id) const {
   auto it = validators_.find(id);

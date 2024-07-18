@@ -2,12 +2,13 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Consensus VERSION 1.0)
 
-set(CMAKE_CXX_COMPILER "/opt/homebrew/Cellar/gcc/14.1.0_1/bin/g++-14")
+#set(CMAKE_C_COMPILER "/opt/homebrew/Cellar/gcc/14.1.0_1/bin/gcc-14")
+#set(CMAKE_CXX_COMPILER "/opt/homebrew/Cellar/gcc/14.1.0_1/bin/g++-14")
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall --std=c++2b") #-O3
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -fsanitize=address --std=c++2b") #-O3
 
 set(CMAKE_OSX_ARCHITECTURES "arm64")
 

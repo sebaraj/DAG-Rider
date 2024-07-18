@@ -17,6 +17,8 @@ public:
   Validator() = default;
   Validator(const std::string &keypair, uint16_t port, uint16_t tx_port,
             uint16_t block_port);
+  void set(const std::string &keypair, uint16_t port, uint16_t tx_port,
+           uint16_t block_port);
   static NodePublicKey
   create_public_key_from(const ed25519_secret_key &secret_key);
 
