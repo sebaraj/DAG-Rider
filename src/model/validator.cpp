@@ -60,6 +60,7 @@ Validator::create_public_key_from(const ed25519_secret_key &secret_key) {
 }
 
 void to_json(nlohmann::json &j, const Validator &validator) {
+  std::cout << "Serializing Validator to JSON" << std::endl;
   j = nlohmann::json{
       {"address", validator.address_.address().to_string() + ":" +
                       std::to_string(validator.address_.port())},
@@ -68,6 +69,7 @@ void to_json(nlohmann::json &j, const Validator &validator) {
       {"block_address", validator.block_address_.address().to_string() + ":" +
                             std::to_string(validator.block_address_.port())},
       {"public_key", validator.public_key_}};
+  std::cout << "Validator serialized successfully" << std::endl;
 }
 
 void from_json(const nlohmann::json &j, Validator &validator) {

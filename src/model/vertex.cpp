@@ -4,7 +4,7 @@
 
 Vertex::Vertex(NodePublicKey owner, Round round, const Block &block,
                const std::map<VertexHash, Round> &parents)
-    : owner_(owner), round_(round), block_(block), parents_(parents) {
+    : hash_(), owner_(owner), block_(block), parents_(parents), round_(round) {
   auto vertex_json = this->to_json();
   std::vector<uint8_t> encoded = nlohmann::json::to_cbor(vertex_json);
   blake3_hasher hasher;

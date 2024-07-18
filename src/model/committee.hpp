@@ -8,6 +8,7 @@
 class Committee {
 public:
   Committee();
+  ~Committee();
   size_t size() const;
   size_t quorum_threshold() const;
   boost::asio::ip::tcp::endpoint get_node_address(Id id) const;
