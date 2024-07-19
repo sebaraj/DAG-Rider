@@ -21,22 +21,6 @@ Validator::Validator(const std::string &keypair, uint16_t port,
       boost::asio::ip::address::from_string("0.0.0.0"), block_port);
 }
 
-void Validator::set(const std::string &keypair, uint16_t port, uint16_t tx_port,
-                    uint16_t block_port) {
-  std::cout << "Creating Validator with keypair: " << keypair << std::endl;
-  ed25519_public_key public_key;
-  ed25519_secret_key secret_key;
-  create_keypair(keypair, public_key, secret_key);
-  public_key_ = create_public_key_from(secret_key);
-
-  address_ = boost::asio::ip::tcp::endpoint(
-      boost::asio::ip::address::from_string("0.0.0.0"), port);
-  tx_address_ = boost::asio::ip::tcp::endpoint(
-      boost::asio::ip::address::from_string("0.0.0.0"), tx_port);
-  block_address_ = boost::asio::ip::tcp::endpoint(
-      boost::asio::ip::address::from_string("0.0.0.0"), block_port);
-}
-
 void Validator::create_keypair(const std::string &kps,
                                ed25519_public_key &public_key,
                                ed25519_secret_key &secret_key) {

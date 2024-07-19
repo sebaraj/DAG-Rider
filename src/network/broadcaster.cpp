@@ -20,21 +20,31 @@ net::awaitable<void> Broadcaster::send(const std::string &address,
       co_await it->second->async_connect(
           tcp::endpoint(net::ip::make_address(address), port),
           net::use_awaitable);
+      std::cout << "Connected to " << address << ":" << port << std::endl;
     } catch (const boost::system::system_error &e) {
       LogNetworkError(NetworkError::FailedToConnect, address, 0);
       co_return;
     }
   }
 
+  // Print out all the details in connections_
+  std::cout << "Current connections:" << std::endl;
+  for (const auto &conn : connections_) {
+    std::cout << "Address: " << conn.first
+              << ", Socket: " << (conn.second ? "Connected" : "Not connected")
+              << std::endl;
+  }
+
   auto &socket = it->second;
   try {
-    co_await net::async_write(*socket, net::buffer(data), net::use_awaitable);
+    std::string message = data; // + "\n"; // Ensure message ends with newline
+    co_await net::async_write(*socket, net::buffer(message),
+                              net::use_awaitable);
+    std::cout << "Sent " << message << " to " << address << ":" << port
+              << std::endl;
   } catch (const boost::system::system_error &e) {
     LogNetworkError(NetworkError::FailedToSendMessage, address, 0);
   }
 }
 
-net::awaitable<void> Broadcaster::run() {
-  // Run the I/O context
-  co_await net::this_coro::executor;
-}
+net::awaitable<void> Broadcaster::run() { co_return; }
