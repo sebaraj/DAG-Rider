@@ -7,7 +7,7 @@
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <cstdint>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <string>
 
 using Id = uint32_t;

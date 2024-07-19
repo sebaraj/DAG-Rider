@@ -2,7 +2,7 @@
 
 #include <blake3.h>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 Vertex::Vertex(NodePublicKey owner, Round round, const Block &block,
                const std::map<VertexHash, Round> &parents)

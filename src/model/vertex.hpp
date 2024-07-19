@@ -2,8 +2,8 @@
 #define VERTEX_HPP
 
 #include <cstdint>
-#include <json.hpp>
 #include <map>
+#include <nlohmann/json.hpp>
 
 #include "block.hpp"
 #include "validator.hpp"

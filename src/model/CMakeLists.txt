@@ -22,7 +22,7 @@ set(CMAKE_OSX_ARCHITECTURES "arm64")
 
 find_package(Boost REQUIRED COMPONENTS system)
 
-include_directories(~/Workspace/dagrider/include)  # nlohmann/json and blake3.h are here
+include_directories(~/Workspace/dagrider/dependencies)  # nlohmann/json and blake3.h are here
 include_directories(/opt/homebrew/opt/openssl@3/include)
 
 set(SOURCES

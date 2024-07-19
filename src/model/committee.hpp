@@ -1,7 +1,7 @@
 #ifndef COMMITTEE_HPP
 #define COMMITTEE_HPP
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <unordered_map>
 
 #include "validator.hpp"

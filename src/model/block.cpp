@@ -2,7 +2,7 @@
 
 #include <blake3.h>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 Block::Block(const std::vector<Transaction> &transactions) : transactions_(transactions) {
     auto encoded = nlohmann::json::to_cbor(transactions_);

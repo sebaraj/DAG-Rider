@@ -5,7 +5,7 @@
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/tcp.hpp>
 #include <iostream>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 Validator::Validator(const std::string &keypair, uint16_t port, uint16_t tx_port,
                      uint16_t block_port) {

@@ -2,7 +2,7 @@
 #define BLOCK_HPP
 
 #include <array>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <vector>
 
 using Transaction = std::vector<uint8_t>;

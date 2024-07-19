@@ -1,5 +1,5 @@
 #include <iostream>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "committee.hpp"
 #include "vertex.hpp"
