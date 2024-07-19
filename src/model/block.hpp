@@ -10,22 +10,22 @@ using BlockHash = std::array<uint8_t, 32>;
 
 class Block {
 public:
-  Block() = default;
-  Block(const std::vector<Transaction> &transactions);
+    Block() = default;
+    Block(const std::vector<Transaction> &transactions);
 
-  BlockHash hash() const;
+    BlockHash hash() const;
 
-  std::vector<Transaction> transactions_;
+    std::vector<Transaction> transactions_;
 
-  // JSON serialization and deserialization
-  friend void to_json(nlohmann::json &j, const Block &block);
-  friend void from_json(const nlohmann::json &j, Block &block);
+    // JSON serialization and deserialization
+    friend void to_json(nlohmann::json &j, const Block &block);
+    friend void from_json(const nlohmann::json &j, Block &block);
 
 private:
-  BlockHash hash_;
+    BlockHash hash_;
 };
 
 void to_json(nlohmann::json &j, const Block &block);
 void from_json(const nlohmann::json &j, Block &block);
 
-#endif // BLOCK_HPP
+#endif  // BLOCK_HPP
