@@ -12,6 +12,17 @@ Block::Block(const std::vector<Transaction> &transactions) : transactions_(trans
     blake3_hasher_finalize(&hasher, hash_.data(), hash_.size());
 }
 
+void Block::addTransaction(const std::string &transaction) {
+    transactions_.emplace_back(transaction.begin(), transaction.end());
+    // Recompute hash after adding transaction
+    nlohmann::json j = *this;
+    std::vector<uint8_t> encoded = nlohmann::json::to_cbor(j);
+    blake3_hasher hasher;
+    blake3_hasher_init(&hasher);
+    blake3_hasher_update(&hasher, encoded.data(), encoded.size());
+    blake3_hasher_finalize(&hasher, hash_.data(), hash_.size());
+}
+
 BlockHash Block::hash() const { return hash_; }
 
 void to_json(nlohmann::json &j, const Block &block) {

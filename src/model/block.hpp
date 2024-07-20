@@ -13,8 +13,8 @@ public:
     Block() = default;
     Block(const std::vector<Transaction> &transactions);
 
+    void addTransaction(const std::string &transaction);
     BlockHash hash() const;
-
     std::vector<Transaction> transactions_;
 
     // JSON serialization and deserialization

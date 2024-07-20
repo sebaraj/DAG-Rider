@@ -39,4 +39,6 @@ private:
     bool is_previous_round(Round previous_round) const;
 };
 
+std::ostream &operator<<(std::ostream &os, const VertexHash &hash);
+
 #endif  // VERTEX_HPP

@@ -24,6 +24,8 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 include_directories(~/Workspace/dagrider/dependencies)  # nlohmann/json and blake3.h are here
 include_directories(/opt/homebrew/opt/openssl@3/include)
+include_directories(${PROJECT_SOURCE_DIR}/../consensus)
+add_subdirectory(${PROJECT_SOURCE_DIR}/../consensus consensus)
 
 set(SOURCES
     block.cpp
@@ -44,6 +46,7 @@ target_link_libraries(consensus
     Boost::system
     c++
     c++abi
+    consensus_layer
 )
 
 cmake_policy(SET CMP0167 NEW)

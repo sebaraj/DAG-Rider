@@ -63,3 +63,12 @@ NodePublicKey Vertex::owner() const { return owner_; }
 VertexHash Vertex::hash() const { return hash_; }
 
 bool Vertex::is_previous_round(Round previous_round) const { return round_ - previous_round == 1; }
+
+std::ostream &operator<<(std::ostream &os, const VertexHash &hash) {
+    os << std::hex;
+    for (const auto &byte : hash) {
+        os << std::setw(2) << std::setfill('0') << static_cast<int>(byte);
+    }
+    os << std::dec;
+    return os;
+}
