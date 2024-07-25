@@ -30,13 +30,15 @@ int main() {
     Sender<Vertex> vertexToBroadcastSender(vertexToBroadcastReceiver);
     Sender<Vertex> vertexOutputSender(vertexOutputReceiver);
     Sender<Block> blockSender(blocksReceiver);
-
+    Sender<Vertex> vertexSender(vertexReceiver);  // new
     // Create and start the consensus algorithm
     std::cout << "Creating and starting the consensus algorithm..." << std::endl;
     NodePublicKey nodeId = nodeKeys[0];
     Consensus::spawn(nodeId, committee, vertexReceiver, vertexToBroadcastSender, vertexOutputSender,
                      blocksReceiver);
 
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "reached and running..." << std::endl;
     // Simulate adding blocks and vertices
     for (int i = 1; i <= 5; ++i) {
         std::cout << "Sending Block " << i << " to the consensus algorithm..." << std::endl;
@@ -51,7 +53,8 @@ int main() {
     // Add some vertices to the consensus
     std::cout << "Adding genesis vertices to the consensus..." << std::endl;
     for (const auto& vertex : genesisVertices) {
-        vertexReceiver.send(vertex);
+        // vertexReceiver.printContents();
+        vertexSender.send(vertex);
     }
 
     // Run for some time to simulate the consensus algorithm

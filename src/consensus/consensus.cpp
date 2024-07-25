@@ -40,6 +40,7 @@ Consensus::Consensus(NodePublicKey nodeId, Committee committee,
       blocksReceiver(blocksReceiver) {}
 
 void Consensus::run() {
+    std::cout << "Running consensus algorithm..." << std::endl;
     while (true) {
         std::vector<Vertex> buffer;
 
