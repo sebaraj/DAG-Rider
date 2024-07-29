@@ -1,52 +1,85 @@
 #include "coordinator.hpp"
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/asio/spawn.hpp>
 #include <iostream>
+#include <nlohmann/json.hpp>
 
-Coordinator::Coordinator(boost::asio::io_context& io_context, const Committee& committee,
-                         std::function<void(const Block&)> block_sender)
-    : committee_(committee), io_context_(io_context), block_sender_(block_sender) {}
+#include "block_builder.hpp"
 
-void Coordinator::spawn(const Id& node_id) {
-    auto tx_address = committee_.get_tx_receiver_address(node_id).address();
-    std::cout << "Start listening for transactions on " << tx_address << std::endl;
-    auto tx_handler = std::make_shared<TxReceiverHandler>([](const Transaction& transaction) {
-        // Handle the transaction (e.g., forward to BlockBuilder)
-    });
-    auto tx_receiver = std::make_shared<Receiver<TxReceiverHandler>>(
-        tx_address, committee_.get_tx_receiver_address(node_id).port(), tx_handler);
-    tx_receiver->start();
+// Implementation of TxReceiverHandler
+TxReceiverHandler::TxReceiverHandler(std::shared_ptr<Committee> committee)
+    : committee_(committee) {}
 
-    auto block_address = committee_.get_block_receiver_address(node_id).address();
-    std::cout << "Start listening for blocks on " << block_address << std::endl;
-    auto block_handler = std::make_shared<BlockReceiverHandler>(block_sender_);
+net::awaitable<void> TxReceiverHandler::dispatch(Writer &writer, const std::string &message) {
+    // Handle the received transaction
+    std::cout << "TxReceiverHandler: Received transaction message.\n";
+
+    // Deserialize the transaction
+    nlohmann::json j = nlohmann::json::parse(message);
+    Transaction transaction;
+    j.get_to(transaction);  // Assuming a from_json function is defined for Transaction
+
+    // Add the transaction to the queue
+    transaction_queue_.push(transaction);
+
+    // If the queue has reached a certain size, create a block
+    const size_t BATCH_SIZE = 4;
+    if (transaction_queue_.size() >= BATCH_SIZE) {
+        std::vector<Transaction> transactions;
+        while (!transaction_queue_.empty()) {
+            transactions.push_back(transaction_queue_.front());
+            transaction_queue_.pop();
+        }
+
+        Block block(transactions);
+        nlohmann::json block_json = block;  // Assuming to_json is defined for Block
+        std::string serialized_block = block_json.dump();
+
+        // Broadcast the block to the committee members
+        Broadcaster broadcaster;
+        for (const auto &endpoint : committee_->get_block_receiver_addresses()) {
+            std::string address = endpoint.address().to_string();
+            unsigned short port = endpoint.port();
+            co_await broadcaster.send(address, port, serialized_block);
+        }
+
+        std::cout << "TxReceiverHandler: Block created and broadcasted.\n";
+    }
+
+    co_return;
+}
+
+// Implementation of BlockReceiverHandler
+BlockReceiverHandler::BlockReceiverHandler(std::shared_ptr<Committee> committee)
+    : committee_(committee) {}
+
+net::awaitable<void> BlockReceiverHandler::dispatch(Writer &writer, const std::string &message) {
+    // Handle the received block
+    std::cout << "BlockReceiverHandler: Received block message.\n";
+
+    // Deserialize the block message
+    nlohmann::json j = nlohmann::json::parse(message);
+    Block block;
+    j.get_to(block);  // Assuming a from_json function is defined for Block
+
+    // Process the block as needed
+    std::cout << "BlockReceiverHandler: Block has " << block.transactions_.size()
+              << " transactions.\n";
+
+    co_return;
+}
+
+// Implementation of TransactionCoordinator
+void TransactionCoordinator::spawn(std::shared_ptr<Committee> committee,
+                                   const std::string &tx_address, unsigned short tx_port,
+                                   const std::string &block_address, unsigned short block_port) {
+    auto tx_handler = std::make_shared<TxReceiverHandler>(committee);
+    auto block_handler = std::make_shared<BlockReceiverHandler>(committee);
+
+    auto tx_receiver
+        = std::make_shared<Receiver<TxReceiverHandler>>(tx_address, tx_port, tx_handler);
     auto block_receiver = std::make_shared<Receiver<BlockReceiverHandler>>(
-        block_address, committee_.get_block_receiver_address(node_id).port(), block_handler);
+        block_address, block_port, block_handler);
+
+    tx_receiver->start();
     block_receiver->start();
-}
-
-Coordinator::TxReceiverHandler::TxReceiverHandler(
-    std::function<void(const Transaction&)> transaction_sender)
-    : transaction_sender_(transaction_sender) {}
-
-net::awaitable<void> Coordinator::TxReceiverHandler::dispatch(Writer& writer,
-                                                              const std::string& message) {
-    std::cout << "TxReceiverHandler received transaction to process: " << message << std::endl;
-    Transaction transaction;  // Deserialize the transaction object from message
-    transaction_sender_(transaction);
-    co_return;
-}
-
-Coordinator::BlockReceiverHandler::BlockReceiverHandler(
-    std::function<void(const Block&)> block_sender)
-    : block_sender_(block_sender) {}
-
-net::awaitable<void> Coordinator::BlockReceiverHandler::dispatch(Writer& writer,
-                                                                 const std::string& message) {
-    std::cout << "BlockReceiverHandler received block to process: " << message << std::endl;
-    Block block;  // Deserialize the block object from message
-    block_sender_(block);
-    co_return;
 }

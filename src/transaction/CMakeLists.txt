@@ -15,6 +15,7 @@ set(CMAKE_OSX_ARCHITECTURES "arm64")
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 
 include_directories(${Boost_INCLUDE_DIRS})
+include_directories(/opt/homebrew/opt/openssl@3/include)
 include_directories(${CMAKE_SOURCE_DIR}/../../dependencies)
 include_directories(${CMAKE_SOURCE_DIR}/../model)
 include_directories(${CMAKE_SOURCE_DIR}/../network)
@@ -22,7 +23,7 @@ include_directories(${CMAKE_SOURCE_DIR}/../consensus)
 
 set(SOURCES
     coordinator.cpp
-    blockbuilder.cpp
+    block_builder.cpp
     main.cpp
     ../model/block.cpp
     ../model/committee.cpp
@@ -36,6 +37,9 @@ add_executable(coordinator_executable ${SOURCES})
 target_link_libraries(coordinator_executable
     pthread
     dl
+    ${PROJECT_SOURCE_DIR}/../../lib/libblake3.a  # Path to blake3 library
+    ${PROJECT_SOURCE_DIR}/../../lib/libed25519.a  # Path to ed25519-donna library
+    /opt/homebrew/opt/openssl@3/lib/libcrypto.a     
     Boost::system
     Boost::filesystem
     Boost::thread

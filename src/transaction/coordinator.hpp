@@ -2,47 +2,40 @@
 #define COORDINATOR_HPP
 
 #include <boost/asio.hpp>
-#include <functional>
-#include <iostream>
 #include <memory>
 #include <queue>
 #include <string>
-#include <vector>
 
 #include "block.hpp"
-#include "broadcaster.hpp"
 #include "committee.hpp"
 #include "receiver.hpp"
 
-class Coordinator {
+class TxReceiverHandler : public MessageHandler,
+                          public std::enable_shared_from_this<TxReceiverHandler> {
 public:
-    Coordinator(boost::asio::io_context& io_context, const Committee& committee,
-                std::function<void(const Block&)> block_sender);
-
-    void spawn(const Id& node_id);
+    TxReceiverHandler(std::shared_ptr<Committee> committee);
+    net::awaitable<void> dispatch(Writer &writer, const std::string &message);
 
 private:
-    class TxReceiverHandler : public MessageHandler {
-    public:
-        TxReceiverHandler(std::function<void(const Transaction&)> transaction_sender);
-        net::awaitable<void> dispatch(Writer& writer, const std::string& message);
+    std::shared_ptr<Committee> committee_;
+    std::queue<Transaction> transaction_queue_;
+};
 
-    private:
-        std::function<void(const Transaction&)> transaction_sender_;
-    };
+class BlockReceiverHandler : public MessageHandler,
+                             public std::enable_shared_from_this<BlockReceiverHandler> {
+public:
+    BlockReceiverHandler(std::shared_ptr<Committee> committee);
+    net::awaitable<void> dispatch(Writer &writer, const std::string &message);
 
-    class BlockReceiverHandler : public MessageHandler {
-    public:
-        BlockReceiverHandler(std::function<void(const Block&)> block_sender);
-        net::awaitable<void> dispatch(Writer& writer, const std::string& message);
+private:
+    std::shared_ptr<Committee> committee_;
+};
 
-    private:
-        std::function<void(const Block&)> block_sender_;
-    };
-
-    Committee committee_;
-    boost::asio::io_context& io_context_;
-    std::function<void(const Block&)> block_sender_;
+class TransactionCoordinator {
+public:
+    static void spawn(std::shared_ptr<Committee> committee, const std::string &tx_address,
+                      unsigned short tx_port, const std::string &block_address,
+                      unsigned short block_port);
 };
 
 #endif  // COORDINATOR_HPP
