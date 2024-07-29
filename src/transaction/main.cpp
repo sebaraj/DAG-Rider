@@ -10,14 +10,17 @@
 #include "coordinator.hpp"
 #include "validator.hpp"
 
-std::vector<unsigned char> string_to_vector(const std::string& str) {
-    return std::vector<unsigned char>(str.begin(), str.end());
+// using Transaction = std::vector<uint8_t>;
+
+std::vector<uint8_t> string_to_vector(const std::string& str) {
+    return std::vector<uint8_t>(str.begin(), str.end());
 }
 
 void simulate_transactions(boost::asio::io_context& io_context,
                            std::shared_ptr<BlockBuilder> block_builder) {
     std::vector<Transaction> transactions;
     for (int i = 0; i < 15; ++i) {
+        std::cout << "Sending transaction Transaction_" << i << std::endl;
         transactions.emplace_back(string_to_vector("Transaction_" + std::to_string(i)));
     }
 
@@ -61,11 +64,14 @@ int main() {
         TransactionCoordinator::spawn(committee, tx_address, tx_port, block_address, block_port);
 
         // Simulate block receiver
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         std::cout << "Simulating Block Receiver..." << std::endl;
         simulate_block_receiver(io_context, committee);
 
         // Run the io_context to handle asynchronous operations
-        io_context.run();
+        // TODO: debug this
+        //
+        // io_context.run();
 
         std::cout << "All components tested successfully!" << std::endl;
     } catch (const std::exception& e) {
