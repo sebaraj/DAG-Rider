@@ -8,6 +8,10 @@ Using C++23 compiled with clang/llvm 18.1.8
 
 ## Building
 
+## Running
+
+- `./Node --id 1 --address 127.0.0.1 --port 12345`
+
 ## Dependencies
 
 - [Boost.Asio](https://www.boost.org/doc/libs/1_85_0/doc/html/boost_asio.html)
