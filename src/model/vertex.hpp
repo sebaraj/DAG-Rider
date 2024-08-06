@@ -28,6 +28,7 @@ public:
 
     // Convert Vertex to JSON
     nlohmann::json to_json() const;
+    static Vertex from_json(const nlohmann::json &j);
 
 private:
     VertexHash hash_;

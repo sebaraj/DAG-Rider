@@ -25,6 +25,38 @@ nlohmann::json Vertex::to_json() const {
     return j;
 }
 
+Vertex Vertex::from_json(const nlohmann::json &j) {
+    Vertex vertex;
+
+    std::string hash_str = j.at("hash").get<std::string>();
+    if (hash_str.size() != vertex.hash_.size()) {
+        throw std::invalid_argument("Invalid hash size");
+    }
+    std::copy(hash_str.begin(), hash_str.end(), vertex.hash_.begin());
+
+    std::string owner_str = j.at("owner").get<std::string>();
+    if (owner_str.size() != vertex.owner_.size()) {
+        throw std::invalid_argument("Invalid owner size");
+    }
+    std::copy(owner_str.begin(), owner_str.end(), vertex.owner_.begin());
+
+    vertex.block_ = j.at("block").get<Block>();
+
+    for (auto &parent : j.at("parents").items()) {
+        std::string parent_key_str = parent.key();
+        VertexHash parent_key;
+        if (parent_key_str.size() != parent_key.size()) {
+            throw std::invalid_argument("Invalid parent key size");
+        }
+        std::copy(parent_key_str.begin(), parent_key_str.end(), parent_key.begin());
+        vertex.parents_[parent_key] = parent.value().get<Round>();
+    }
+
+    vertex.round_ = j.at("round").get<Round>();
+
+    return vertex;
+}
+
 std::vector<Vertex> Vertex::genesis(const std::vector<NodePublicKey> &nodes) {
     std::vector<Vertex> vertices;
     for (const auto &owner : nodes) {

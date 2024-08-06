@@ -27,6 +27,7 @@ public:
     Broadcaster();
     void start();
     net::awaitable<void> send(const std::string &address, uint16_t port, const std::string &data);
+    net::io_context &get_io_context() { return io_context_; }
 
 private:
     net::awaitable<void> run();
